@@ -57,7 +57,12 @@ public class AccountAggregate
 
   private void Apply(DepositEvent deposit)
   {
-    Balance += deposit.Amount;
+    if (AccountId == null)
+      throw new AccountNotCreatedException("128 ERROR_ACCOUNT_UNINSTANTIATED");
+    if (deposit.Amount > Balance)
+      throw new MaxBalanceExceeded("281 ERROR_BALANCE_SUCCEED_MAX_BALANCE");
+    else
+      Balance += deposit.Amount;
   }
 
   private void Apply(WithdrawalEvent wihdrawal)
