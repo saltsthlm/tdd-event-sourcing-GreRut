@@ -84,13 +84,11 @@ public class AccountAggregate
   private void Apply(DeactivationEvent deactivation)
   {
     Status = AccountStatus.Disabled;
-    AccountLog = [
-        new (
-          Type: "DEACTIVATE",
-          Message: "Account inactive for 270 days",
-          Timestamp: DateTime.Parse("2024-10-02T10:30:00")
-        ),
-      ];
+    if (AccountLog == null)
+      AccountLog = new List<LogMessage>();
+    var logMessage = new LogMessage("DEACTIVATE", deactivation.Reason.ToString(), deactivation.Timestamp);
+    AccountLog.Add(logMessage);
+ 
   }
 
   private void Apply(ActivationEvent activation)
