@@ -51,6 +51,9 @@ public class AccountAggregate
       case ActivationEvent activation:
         Apply(activation);
         break;
+      case ClosureEvent closure:
+        Apply(closure);
+        break;
       default:
         throw new EventTypeNotSupportedException("162 ERROR_EVENT_NOT_SUPPORTED");
     }
@@ -117,6 +120,10 @@ public class AccountAggregate
 
   private void Apply(ClosureEvent closure)
   {
-    throw new NotImplementedException();
+    if (AccountLog == null)
+      AccountLog = new List<LogMessage>();
+    var logMessage = new LogMessage("CLOSURE", closure.Reason.ToString(), closure.Timestamp);
+    AccountLog.Add(logMessage);
+    Status = AccountStatus.Closed;
   }
 }
