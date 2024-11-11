@@ -73,7 +73,7 @@ public class AccountAggregate
     if (AccountId == null)
       throw new AccountNotCreatedException("128 ERROR_ACCOUNT_UNINSTANTIATED");
     if (withdrawal.amount > Balance)
-      throw new MaxBalanceExceeded("281 ERROR_BALANCE_SUCCEED_MAX_BALANCE");
+      throw new MaxBalanceExceeded("285 ERROR_BALANCE_IN_NEGATIVE");
     else
       Balance -= withdrawal.amount;
   }
