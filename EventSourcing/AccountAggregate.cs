@@ -65,6 +65,8 @@ public class AccountAggregate
   {
     if (AccountId == null)
       throw new AccountNotCreatedException("128 ERROR_ACCOUNT_UNINSTANTIATED");
+    if (Status == AccountStatus.Disabled)
+      throw new AccountDisabledException("344 ERROR_TRANSACTION_REJECTED_ACCOUNT_DEACTIVATED");
     if (deposit.Amount > Balance)
       throw new MaxBalanceExceeded("281 ERROR_BALANCE_SUCCEED_MAX_BALANCE");
     else
@@ -75,6 +77,8 @@ public class AccountAggregate
     {
     if (AccountId == null)
       throw new AccountNotCreatedException("128 ERROR_ACCOUNT_UNINSTANTIATED");
+    if (Status == AccountStatus.Disabled)
+      throw new Exception("344 ERROR_TRANSACTION_REJECTED_ACCOUNT_DEACTIVATED");
     if (withdrawal.amount > Balance)
       throw new MaxBalanceExceeded("285 ERROR_BALANCE_IN_NEGATIVE");
     else
