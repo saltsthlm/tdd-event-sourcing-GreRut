@@ -24,9 +24,13 @@ public class AccountAggregate
     }
     
     var account = new AccountAggregate();
+    var iterator = 1;
     foreach (var accountEvent in events)
     {
+      if (iterator != accountEvent.EventId)
+        throw new Exception("511 ERROR_INVALID_EVENT_STREAM");
       account.Apply(accountEvent);
+      iterator++;
     }
 
     return account;
