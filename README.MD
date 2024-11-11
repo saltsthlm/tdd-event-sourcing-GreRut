@@ -1,3 +1,4 @@
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/vmTVbDw3)
 # TDD-Driven Event Sourcing
 
 Test-Driven Development (TDD) focuses on solving tasks incrementally, one small step at a time. In this weekend assignment, you'll create a function to generate an aggregate from an event stream. Don't worry if you're unfamiliar with event streaming; we assume this might be new to you.

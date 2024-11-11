@@ -24,9 +24,13 @@ public class AccountAggregate
     }
     
     var account = new AccountAggregate();
+    var iterator = 1;
     foreach (var accountEvent in events)
     {
+      if (iterator != accountEvent.EventId)
+        throw new Exception("511 ERROR_INVALID_EVENT_STREAM");
       account.Apply(accountEvent);
+      iterator++;
     }
 
     return account;
@@ -41,6 +45,21 @@ public class AccountAggregate
         break;
       case DepositEvent deposit:
         Apply(deposit);
+        break;
+      case WithdrawalEvent withdrawal:
+        Apply(withdrawal);
+        break;
+      case DeactivationEvent deactivation:
+        Apply(deactivation);
+        break;
+      case ActivationEvent activation:
+        Apply(activation);
+        break;
+      case ClosureEvent closure:
+        Apply(closure);
+        break;
+      case CurrencyChangeEvent currencyChange:
+        Apply(currencyChange);
         break;
       default:
         throw new EventTypeNotSupportedException("162 ERROR_EVENT_NOT_SUPPORTED");
@@ -57,31 +76,76 @@ public class AccountAggregate
 
   private void Apply(DepositEvent deposit)
   {
-    Balance += deposit.Amount;
+    if (AccountId == null)
+      throw new AccountNotCreatedException("128 ERROR_ACCOUNT_UNINSTANTIATED");
+    if (Status == AccountStatus.Disabled)
+      throw new AccountDisabledException("344 ERROR_TRANSACTION_REJECTED_ACCOUNT_DEACTIVATED");
+    if (Status == AccountStatus.Closed)
+      throw new AccountClosedException("502 ERROR_ACCOUNT_CLOSED");
+    if (deposit.Amount > Balance)
+      throw new MaxBalanceExceeded("281 ERROR_BALANCE_SUCCEED_MAX_BALANCE");
+    else
+      Balance += deposit.Amount;
   }
 
-  private void Apply(WithdrawalEvent wihdrawal)
-  {
-    throw new NotImplementedException();
+  private void Apply(WithdrawalEvent withdrawal)
+    {
+    if (AccountId == null)
+      throw new AccountNotCreatedException("128 ERROR_ACCOUNT_UNINSTANTIATED");
+    if (Status == AccountStatus.Disabled)
+      throw new Exception("344 ERROR_TRANSACTION_REJECTED_ACCOUNT_DEACTIVATED");
+    if (Status == AccountStatus.Closed)
+      throw new AccountClosedException("502 ERROR_ACCOUNT_CLOSED");
+    if (withdrawal.amount > Balance)
+      throw new MaxBalanceExceeded("285 ERROR_BALANCE_IN_NEGATIVE");
+    else
+      Balance -= withdrawal.amount;
   }
 
   private void Apply(DeactivationEvent deactivation)
   {
-    throw new NotImplementedException();
+    Status = AccountStatus.Disabled;
+    if (AccountLog == null)
+      AccountLog = new List<LogMessage>();
+    var logMessage = new LogMessage("DEACTIVATE", deactivation.Reason.ToString(), deactivation.Timestamp);
+    AccountLog.Add(logMessage);
+ 
   }
 
   private void Apply(ActivationEvent activation)
   {
-    throw new NotImplementedException();
+    if (AccountLog == null)
+      AccountLog = new List<LogMessage>();
+    if (Status == AccountStatus.Disabled)
+    {
+      var logMessage = new LogMessage("ACTIVATE", "Account reactivated", activation.Timestamp);
+      AccountLog.Add(logMessage);
+      Status = AccountStatus.Enabled;
+    }
   }
 
   private void Apply(CurrencyChangeEvent currencyChange)
   {
-    throw new NotImplementedException();
+    var changeFrom = Currency.ToString().ToUpper();
+    Currency = currencyChange.NewCurrency;
+    Balance = currencyChange.NewBalance;
+    Status = AccountStatus.Disabled;
+    if (AccountLog == null)
+      AccountLog = new List<LogMessage>();
+    var changedTo = currencyChange.NewCurrency.ToString().ToUpper();
+    var logMessage = new LogMessage("CURRENCY-CHANGE", $"Change currency from '{changeFrom}' to '{changedTo}'", currencyChange.Timestamp);
+    AccountLog.Add(logMessage);
   }
 
   private void Apply(ClosureEvent closure)
   {
-    throw new NotImplementedException();
+    var closingBalanceString = Balance.ToString();
+    var closingBalance = int.Parse(closingBalanceString.Substring(0, closingBalanceString.Length - 2));
+    if (AccountLog == null)
+      AccountLog = new List<LogMessage>();
+    var reasonForClosure = closure.Reason.ToString();
+    var logMessage = new LogMessage("CLOSURE", $"Reason: {reasonForClosure}, Closing Balance: '{closingBalance}'", closure.Timestamp);
+    AccountLog.Add(logMessage);
+    Status = AccountStatus.Closed;
   }
 }
