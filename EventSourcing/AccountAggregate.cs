@@ -54,6 +54,9 @@ public class AccountAggregate
       case ClosureEvent closure:
         Apply(closure);
         break;
+      case CurrencyChangeEvent currencyChange:
+        Apply(currencyChange);
+        break;
       default:
         throw new EventTypeNotSupportedException("162 ERROR_EVENT_NOT_SUPPORTED");
     }
@@ -119,13 +122,16 @@ public class AccountAggregate
 
   private void Apply(CurrencyChangeEvent currencyChange)
   {
-    throw new NotImplementedException();
+    Currency = currencyChange.NewCurrency;
+    Balance = currencyChange.NewBalance;
+    Status = AccountStatus.Disabled; 
   }
 
   private void Apply(ClosureEvent closure)
   {
     if (AccountLog == null)
       AccountLog = new List<LogMessage>();
+    //Eventually refactor
     var logMessage = new LogMessage("CLOSURE", "Reason: Customer request, Closing Balance: '5000'", closure.Timestamp);
     AccountLog.Add(logMessage);
     Status = AccountStatus.Closed;
