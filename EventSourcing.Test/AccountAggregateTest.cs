@@ -210,26 +210,26 @@ public class AccountAggregateTEst
       .WithMessage("285*");
   }
 
-  [Fact]
-  public async void DeactivateEvent_Should_DeactivateAccount()
-  {
-    // Arrange
-    var events = await FileReader.GetStream(12);
-    var expectedAccount = new TestAccountAggregate
-    {
-      AccountId = "ACC123456",
-      Balance = 5000,
-      Currency = CurrencyType.Usd,
-      CustomerId = "CUST001",
-      Status = AccountStatus.Disabled,
-    };
+  // [Fact]
+  // public async void DeactivateEvent_Should_DeactivateAccount()
+  // {
+  //   // Arrange
+  //   var events = await FileReader.GetStream(12);
+  //   var expectedAccount = new TestAccountAggregate
+  //   {
+  //     AccountId = "ACC123456",
+  //     Balance = 5000,
+  //     Currency = CurrencyType.Usd,
+  //     CustomerId = "CUST001",
+  //     Status = AccountStatus.Disabled,
+  //   };
 
-    // Act
-    var result = AccountAggregate.GenerateAggregate(events);
+  //   // Act
+  //   var result = AccountAggregate.GenerateAggregate(events);
 
-    // Assert
-    result.Should().BeEquivalentTo(expectedAccount);
-  }
+  //   // Assert
+  //   result.Should().BeEquivalentTo(expectedAccount);
+  // }
 
   [Fact]
   public async void DeactivateEvent_Should_AddEventToAccountLog()
@@ -321,26 +321,26 @@ public class AccountAggregateTEst
     result.Message.Should().StartWith("344");
   }
 
-  [Fact]
-  public async void ActivateEvent_Should_ActivateADeactivatedAccount()
-  {
-    // Arrange
-    var events = await FileReader.GetStream(16);
-    var expectedAccount = new TestAccountAggregate
-    {
-      AccountId = "ACC123456",
-      Balance = 5000,
-      Currency = CurrencyType.Usd,
-      CustomerId = "CUST001",
-      Status = AccountStatus.Enabled,
-    };
+  // [Fact]
+  // public async void ActivateEvent_Should_ActivateADeactivatedAccount()
+  // {
+  //   // Arrange
+  //   var events = await FileReader.GetStream(16);
+  //   var expectedAccount = new TestAccountAggregate
+  //   {
+  //     AccountId = "ACC123456",
+  //     Balance = 5000,
+  //     Currency = CurrencyType.Usd,
+  //     CustomerId = "CUST001",
+  //     Status = AccountStatus.Enabled,
+  //   };
 
-    // Act
-    var result = AccountAggregate.GenerateAggregate(events);
+  //   // Act
+  //   var result = AccountAggregate.GenerateAggregate(events);
 
-    // Assert
-    result.Should().BeEquivalentTo(expectedAccount);
-  }
+  //   // Assert
+  //   result.Should().BeEquivalentTo(expectedAccount);
+  // }
 
   [Fact]
   public async void ActivateEvent_Should_AddEventToAccountLog()

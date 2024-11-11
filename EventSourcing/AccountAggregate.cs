@@ -48,6 +48,9 @@ public class AccountAggregate
       case DeactivationEvent deactivation:
         Apply(deactivation);
         break;
+      case ActivationEvent activation:
+        Apply(activation);
+        break;
       default:
         throw new EventTypeNotSupportedException("162 ERROR_EVENT_NOT_SUPPORTED");
     }
@@ -97,7 +100,14 @@ public class AccountAggregate
 
   private void Apply(ActivationEvent activation)
   {
-    throw new NotImplementedException();
+    if (AccountLog == null)
+      AccountLog = new List<LogMessage>();
+    if (Status == AccountStatus.Disabled)
+    {
+      var logMessage = new LogMessage("ACTIVATE", "Account reactivated",activation.Timestamp);
+      AccountLog.Add(logMessage);
+      Status = AccountStatus.Enabled;
+    }
   }
 
   private void Apply(CurrencyChangeEvent currencyChange)
