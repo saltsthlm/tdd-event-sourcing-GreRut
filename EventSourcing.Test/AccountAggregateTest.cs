@@ -247,7 +247,7 @@ public class AccountAggregateTEst
         new (
           Type: "DEACTIVATE",
           Message: "Account inactive for 270 days",
-          Timestamp: DateTime.Parse("2024-10-02T10:30:00Z")
+          Timestamp: DateTime.Parse("2024-10-02T10:30:00")
         ),
       ]
     };
