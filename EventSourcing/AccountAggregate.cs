@@ -118,7 +118,7 @@ public class AccountAggregate
       AccountLog = new List<LogMessage>();
     if (Status == AccountStatus.Disabled)
     {
-      var logMessage = new LogMessage("ACTIVATE", "Account reactivated",activation.Timestamp);
+      var logMessage = new LogMessage("ACTIVATE", "Account reactivated", activation.Timestamp);
       AccountLog.Add(logMessage);
       Status = AccountStatus.Enabled;
     }
@@ -126,22 +126,25 @@ public class AccountAggregate
 
   private void Apply(CurrencyChangeEvent currencyChange)
   {
+    var changeFrom = Currency.ToString().ToUpper();
     Currency = currencyChange.NewCurrency;
     Balance = currencyChange.NewBalance;
     Status = AccountStatus.Disabled;
     if (AccountLog == null)
       AccountLog = new List<LogMessage>();
-    //Eventually refactor
-    var logMessage = new LogMessage("CURRENCY-CHANGE", "Change currency from 'USD' to 'SEK'", currencyChange.Timestamp);
+    var changedTo = currencyChange.NewCurrency.ToString().ToUpper();
+    var logMessage = new LogMessage("CURRENCY-CHANGE", $"Change currency from '{changeFrom}' to '{changedTo}'", currencyChange.Timestamp);
     AccountLog.Add(logMessage);
   }
 
   private void Apply(ClosureEvent closure)
   {
+    var closingBalanceString = Balance.ToString();
+    var closingBalance = int.Parse(closingBalanceString.Substring(0, closingBalanceString.Length - 2));
     if (AccountLog == null)
       AccountLog = new List<LogMessage>();
-    //Eventually refactor
-    var logMessage = new LogMessage("CLOSURE", "Reason: Customer request, Closing Balance: '5000'", closure.Timestamp);
+    var reasonForClosure = closure.Reason.ToString();
+    var logMessage = new LogMessage("CLOSURE", $"Reason: {reasonForClosure}, Closing Balance: '{closingBalance}'", closure.Timestamp);
     AccountLog.Add(logMessage);
     Status = AccountStatus.Closed;
   }
